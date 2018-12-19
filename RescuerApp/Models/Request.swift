@@ -54,15 +54,11 @@ class Request  {
                       requestLocation: data["requestLocation"] as! GeoPoint,
                       status: data["status"] as! Int)
         } else {
-            let a = data["rescuerLocation"] as! GeoPoint
-            let b = data["rescuerLocation"]
-            print(a)
-            print(b ?? "")
             self.init(documentID: document.documentID,
                       phoneNumber: data["phoneNumber"] as! String,
                       requestLocation: data["requestLocation"] as! GeoPoint,
                       rescuerID: data["rescuerID"] as! String,
-                      rescuerLocation: a,
+                      rescuerLocation: data["rescuerLocation"] as! GeoPoint,
                       rescuerName: data["rescuerName"] as! String,
                       status: data["status"] as! Int)
         }

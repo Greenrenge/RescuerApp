@@ -213,9 +213,6 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
         
         let distance = CLLocation(latitude: sourceLocation.latitude, longitude: sourceLocation.longitude).distance(from: CLLocation(latitude: destinationLocation.latitude, longitude: destinationLocation.longitude))
         
-        print("locations = \(sourceLocation.latitude) \(sourceLocation.longitude)")
-        print("distance = \(distance / 1000) km")
-        
         let sourcePin = CustomPin(pinTitle: "You are here", pinSubTitle: "", location: sourceLocation)
         let destinationPin = CustomPin(pinTitle: "Rescuer is coming", pinSubTitle: "", location: destinationLocation)
         self.mapView.addAnnotation(destinationPin)
