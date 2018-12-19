@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import FirebaseAuth
 import FirebaseFirestore
 import CoreLocation
+
 
 class RequestViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -19,12 +21,16 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
-        startListeningForRestaurants()
+        startListening()
+        
+        let icon = UIImage(named: "padlock")?.withRenderingMode(.alwaysOriginal)
+        let logoutButton = UIBarButtonItem(image: icon, style: UIBarButtonItem.Style.plain, target: self, action: #selector(RequestViewController.logout))
+        self.navigationItem.leftBarButtonItem = logoutButton
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        stopListeningForRestaurants()
+        stopListening()
     }
     
     override func viewDidLoad() {
@@ -47,18 +53,11 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let alert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .alert)
-//
-//        let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
-//        loadingIndicator.hidesWhenStopped = true
-//        loadingIndicator.style = UIActivityIndicatorView.Style.gray
-//        loadingIndicator.startAnimating();
-//
-//        alert.view.addSubview(loadingIndicator)
-//        present(alert, animated: true, completion: nil)
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "requestCell",
                                                  for: indexPath) as! RequestTableViewCell
+        cell.populate(name: "Loading...", address: "Loading...")
+        
         let request = requestData[indexPath.row]
         
         let longitude: CLLocationDegrees = request.requestLocation.longitude
@@ -89,8 +88,6 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
                 cell.populate(name: "Not Founded", address: "Not Founded")
             }
         })
-        
-//        dismiss(animated: false, completion: nil)
         return cell
     }
     
@@ -101,10 +98,9 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
         self.navigationController?.pushViewController(controller, animated: true)
     }
 
-    private func startListeningForRestaurants() {
-        
-        let basicQuery = Firestore.firestore().collection("requests").whereField("status", isEqualTo: 0).limit(to: 10)
-        requestListener = basicQuery.addSnapshotListener { (snapshot, error) in
+    private func startListening() {
+        let requestRef = Firestore.firestore().collection("requests").whereField("status", isEqualTo: 0).limit(to: 10)
+        requestListener = requestRef.addSnapshotListener { (snapshot, error) in
             if let error = error {
                 print ("I got an error retrieving requests: \(error)")
                 return
@@ -121,9 +117,18 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
         
     }
     
-    private func stopListeningForRestaurants() {
+    private func stopListening() {
         requestListener?.remove()
         requestListener = nil
+    }
+    
+    @objc private func logout(sender: UIBarButtonItem) {
+        do {
+            try Auth.auth().signOut()
+            self.dismiss(animated: true, completion: nil)
+        } catch let err {
+            print(err)
+        }
     }
     
 }

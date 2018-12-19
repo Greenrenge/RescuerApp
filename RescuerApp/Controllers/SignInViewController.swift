@@ -13,9 +13,12 @@ class SignInViewController: UIViewController {
     
     @IBOutlet weak var emailText: UITextField!
     @IBOutlet weak var passwordText: UITextField!
+    @IBOutlet weak var signInButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        signInButton.layer.cornerRadius = 10.0
+        signInButton.layer.masksToBounds = true
         Auth.auth().addStateDidChangeListener { (auth, user) in
             if user != nil {
                 self.performSegue(withIdentifier: "signed", sender: nil)

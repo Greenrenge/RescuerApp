@@ -11,18 +11,6 @@ import FirebaseAuth
 import FirebaseFirestore
 import CoreLocation
 
-class CustomPin: NSObject, MKAnnotation {
-    var coordinate: CLLocationCoordinate2D
-    var title: String?
-    var subtitle: String?
-    
-    init(pinTitle:String, pinSubTitle:String, location:CLLocationCoordinate2D) {
-        self.title = pinTitle
-        self.subtitle = pinSubTitle
-        self.coordinate = location
-    }
-}
-
 class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
     
     @IBOutlet weak var titleLabel: UILabel!
@@ -40,11 +28,20 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
-        startListeningForRestaurants()
+        startListening()
+        
+        titleLabel.text = "Loading..."
+        addressLabel.text = "Loading..."
+        phoneNumber.text = "Loading..."
         
         rescueButton.layer.cornerRadius = 10.0
         rescueButton.layer.masksToBounds = true
+        
         phoneNumber.text = request.phoneNumber
+        
+        let phoneTap = UITapGestureRecognizer(target: self, action: #selector(RequestDetailViewController.onClickPhoneLabel))
+        phoneNumber.isUserInteractionEnabled = true
+        phoneNumber.addGestureRecognizer(phoneTap)
         
         let longitude: CLLocationDegrees = request.requestLocation.longitude
         let latitude: CLLocationDegrees = request.requestLocation.latitude
@@ -68,7 +65,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
                 let address = "\(String(describing: subDistrict)), \(String(describing: district)), \(String(describing: province))"
                 
                 self.titleLabel.text = name
-                self.addressLabel.text = address
+                self.addressLabel.text = "\(address)\n"
             }
             else {
                 print("Problem with the data received from geocoder")
@@ -78,7 +75,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        stopListeningForRestaurants()
+        stopListening()
     }
 
     override func viewDidLoad() {
@@ -111,6 +108,10 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
         return controller
     }
     
+    @objc func onClickPhoneLabel(sender: UITapGestureRecognizer) {
+        makeAPhoneCall(phoneNumber: request.phoneNumber)
+    }
+    
     @IBAction func onClickRescue(_ sender: UIButton) {
         guard request.status == 0 else {
             let title = "เกิดข้อผิดพลาด"
@@ -118,6 +119,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
             let completing = "คำขอเสร็จสิ้นแล้ว"
             let canceling = "คำขอถูกยกเลิก"
             var message = ""
+            
             if request.status == 1 {
                 message = rescuing
             } else if request.status == 2 {
@@ -125,6 +127,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
             } else if request.status == 3 {
                 message = canceling
             }
+            
             let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
             alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default) { action in
                 self.navigationController?.popViewController(animated: true)
@@ -153,7 +156,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
                         print("Error Updating: \(err)")
                     } else {
                         rescuer["rescuerLocation"] = GeoPoint(latitude: 13.7270068, longitude: 100.5259204)
-                        let controller = RescueDetailViewController.fromStoryboard(request: self.request, rescuer: rescuer)
+                        let controller = RescueDetailViewController.fromStoryboard(request: self.request, rescuer: rescuer, requestId: self.requestId)
                         self.navigationController?.pushViewController(controller, animated: true)
                     }
                 }
@@ -163,8 +166,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
         }
     }
     
-    private func startListeningForRestaurants() {
-        
+    private func startListening() {
         let requestRef = Firestore.firestore().collection("requests").document(requestId)
         statusListener = requestRef.addSnapshotListener { (snapshot, error) in
             if let error = error {
@@ -173,13 +175,12 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
             }
             guard let snapshot = snapshot else { return }
             let requestData = snapshot.data()
-            print("New Status: \(String(describing: requestData?["status"]))")
             self.request.status = requestData?["status"] as! Int
         }
         
     }
     
-    private func stopListeningForRestaurants() {
+    private func stopListening() {
         statusListener?.remove()
         statusListener = nil
     }
@@ -190,6 +191,17 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
         
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func makeAPhoneCall(phoneNumber: String) {
+        if let url = URL(string: "tel://" + phoneNumber) {
+            if UIApplication.shared.canOpenURL(url) == true {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+            else {
+                showMsg(msgTitle: "Cannot Access Phone Call", msgText: "Do not have phone call or permission is not given")
+            }
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

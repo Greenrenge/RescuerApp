@@ -9,21 +9,27 @@ import UIKit
 
 class HistoryTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var phoneLabel: UILabel!
+    
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var addressLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
     
-    func populate(request: Request) {
-        phoneLabel.text = request.phoneNumber
+    func populate(name: String, address: String) {
+        nameLabel.text = name
+        addressLabel.text = address
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        nameLabel.text = "Loading..."
+        addressLabel.text = "Loading..."
     }
 
 }
