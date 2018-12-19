@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gll-1r-Vkq">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gll-1r-Vkq">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -242,7 +242,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="aAX-9c-xG3">
             <objects>
-                <tabBarController id="Jtu-BO-C3O" customClass="TabBarController" customModule="RescuerApp" customModuleProvider="target" sceneMemberID="viewController">
+                <tabBarController id="Jtu-BO-C3O" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="MNu-bP-adD">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -310,6 +310,9 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="275" id="Jpu-4E-H4T"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="delegate" destination="eB5-Hz-7Lf" id="BxC-j3-6kM"/>
+                                </connections>
                             </mapView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kasetsart University" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eZ8-On-XTT">
                                 <rect key="frame" x="59" y="356" width="241" height="23"/>
@@ -408,6 +411,9 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="275" id="pJ0-9h-fOb"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="delegate" destination="kkK-ma-T6p" id="POi-2N-B67"/>
+                                </connections>
                             </mapView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="023456789" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sRr-bB-n7O">
                                 <rect key="frame" x="59" y="420" width="97" height="21.5"/>
@@ -504,6 +510,9 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="275" id="0Bc-0M-Slc"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="delegate" destination="F1K-Rf-wl2" id="mEz-vY-qRk"/>
+                                </connections>
                             </mapView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Kasetsart University" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m2E-Oz-r5f">
                                 <rect key="frame" x="59" y="356" width="241" height="23"/>
@@ -571,9 +580,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="addressPin" width="418.90908813476562" height="418.90908813476562"/>
-        <image name="historyUser" width="48" height="48"/>
-        <image name="lightRequest" width="48" height="48"/>
-        <image name="phoneCall" width="418.90908813476562" height="418.90908813476562"/>
+        <image name="addressPin" width="64" height="64"/>
+        <image name="historyUser" width="30" height="30"/>
+        <image name="lightRequest" width="30" height="30"/>
+        <image name="phoneCall" width="64" height="64"/>
     </resources>
 </document>

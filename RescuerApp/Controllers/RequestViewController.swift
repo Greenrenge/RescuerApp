@@ -25,7 +25,7 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
         
         let icon = UIImage(named: "padlock")?.withRenderingMode(.alwaysOriginal)
         let logoutButton = UIBarButtonItem(image: icon, style: UIBarButtonItem.Style.plain, target: self, action: #selector(RequestViewController.logout))
-        self.navigationItem.leftBarButtonItem = logoutButton
+        self.navigationItem.rightBarButtonItem = logoutButton
     }
     
     override func viewWillDisappear(_ animated: Bool) {

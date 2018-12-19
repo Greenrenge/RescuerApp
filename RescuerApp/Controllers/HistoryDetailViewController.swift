@@ -120,10 +120,10 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
         mapView.removeAnnotations([srcPin, desPin])
         
         let requestLocation = request.requestLocation
-//        let rescuerLocation = request.rescuerLocation
+        let rescuerLocation = request.rescuerLocation
         
-//        let src = CLLocationCoordinate2D(latitude: rescuerLocation.latitude, longitude: rescuerLocation.longitude)
-        let src = CLLocationCoordinate2D(latitude: 13.8551301, longitude: 100.5333459)
+        let src = CLLocationCoordinate2D(latitude: (rescuerLocation?.latitude)!, longitude: (rescuerLocation?.longitude)!)
+//        let src = CLLocationCoordinate2D(latitude: 13.8551301, longitude: 100.5333459)
         let des = CLLocationCoordinate2D(latitude: requestLocation.latitude, longitude: requestLocation.longitude)
         
         srcPin.coordinate = src
@@ -136,7 +136,7 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
         let srcPlaceMark = MKPlacemark(coordinate: src)
         let desPlaceMark = MKPlacemark(coordinate: des)
         
-        let dirRequest:MKDirections.Request = MKDirections.Request()
+        let dirRequest = MKDirections.Request()
         dirRequest.source = MKMapItem(placemark: srcPlaceMark)
         dirRequest.destination = MKMapItem(placemark: desPlaceMark)
         dirRequest.transportType = .automobile
@@ -160,6 +160,13 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         showMsg(msgTitle: "Cannot Access Location Service", msgText: "Do not have Location Services or permission is not given")
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let renderer = MKPolylineRenderer(overlay: overlay)
+        renderer.strokeColor = UIColor.blue
+        renderer.lineWidth = 4.0
+        return renderer
     }
     
 }
