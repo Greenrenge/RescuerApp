@@ -6,16 +6,21 @@
 //
 
 import UIKit
+import MapKit
 import CoreLocation
 
-class HistoryDetailViewController: UIViewController {
+class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var phoneLabel: UILabel!
+    @IBOutlet weak var mapView: MKMapView!
     
     private var request: Request!
+    private let locationManager = CLLocationManager()
+    private var srcPin = MKPointAnnotation()
+    private var desPin = MKPointAnnotation()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -62,6 +67,21 @@ class HistoryDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Ask for Authorisation from the User.
+        self.locationManager.requestAlwaysAuthorization()
+        
+        // For use in foreground
+        self.locationManager.requestWhenInUseAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.startUpdatingLocation()
+        }
+        else {
+            showMsg(msgTitle: "Cannot Access Location Service", msgText: "Do not have Location Services or permission is not given")
+        }
     }
     
     static func fromStoryboard(_ storyboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil),
@@ -94,6 +114,52 @@ class HistoryDetailViewController: UIViewController {
                 showMsg(msgTitle: "Cannot Access Phone Call", msgText: "Do not have phone call or permission is not given")
             }
         }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        mapView.removeAnnotations([srcPin, desPin])
+        
+        let requestLocation = request.requestLocation
+//        let rescuerLocation = request.rescuerLocation
+        
+//        let src = CLLocationCoordinate2D(latitude: rescuerLocation.latitude, longitude: rescuerLocation.longitude)
+        let src = CLLocationCoordinate2D(latitude: 13.8551301, longitude: 100.5333459)
+        let des = CLLocationCoordinate2D(latitude: requestLocation.latitude, longitude: requestLocation.longitude)
+        
+        srcPin.coordinate = src
+        srcPin.title = "ฉัน"
+        desPin.coordinate = des
+        desPin.title = "ผู้ประสบภัย"
+        
+        mapView.addAnnotations([srcPin, desPin])
+        
+        let srcPlaceMark = MKPlacemark(coordinate: src)
+        let desPlaceMark = MKPlacemark(coordinate: des)
+        
+        let dirRequest:MKDirections.Request = MKDirections.Request()
+        dirRequest.source = MKMapItem(placemark: srcPlaceMark)
+        dirRequest.destination = MKMapItem(placemark: desPlaceMark)
+        dirRequest.transportType = .automobile
+        
+        let directions = MKDirections(request: dirRequest)
+        directions.calculate { (response, error) in
+            guard let directionResonse = response else {
+                if let error = error {
+                    print("we have error getting directions==\(error.localizedDescription)")
+                }
+                return
+            }
+            let route = directionResonse.routes[0]
+            self.mapView.addOverlay(route.polyline, level: .aboveRoads)
+            
+            let rect = route.polyline.boundingMapRect
+            self.mapView.setRegion(MKCoordinateRegion(rect), animated: true)
+        }
+        self.mapView.delegate = self
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        showMsg(msgTitle: "Cannot Access Location Service", msgText: "Do not have Location Services or permission is not given")
     }
     
 }

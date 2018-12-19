@@ -24,6 +24,8 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
     private let locationManager = CLLocationManager()
     private var currentGeo: GeoPoint?
     private var statusListener: ListenerRegistration?
+    private var srcPin = MKPointAnnotation()
+    private var desPin = MKPointAnnotation()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -205,28 +207,31 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let location = locations.last! as CLLocation
-        let sourceLocation = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        mapView.removeAnnotations([srcPin, desPin])
         
-        let requestLocation = request?.requestLocation
-        let destinationLocation = CLLocationCoordinate2D(latitude: (requestLocation?.latitude)!, longitude: (requestLocation?.longitude)!)
+        let requestLocation = request.requestLocation
+//        let location = locations.last! as CLLocation
         
-        let distance = CLLocation(latitude: sourceLocation.latitude, longitude: sourceLocation.longitude).distance(from: CLLocation(latitude: destinationLocation.latitude, longitude: destinationLocation.longitude))
+//        let src = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        let src = CLLocationCoordinate2D(latitude: 13.8551301, longitude: 100.5333459)
+        let des = CLLocationCoordinate2D(latitude: requestLocation.latitude, longitude: requestLocation.longitude)
         
-        let sourcePin = CustomPin(pinTitle: "You are here", pinSubTitle: "", location: sourceLocation)
-        let destinationPin = CustomPin(pinTitle: "Rescuer is coming", pinSubTitle: "", location: destinationLocation)
-        self.mapView.addAnnotation(destinationPin)
-        self.mapView.addAnnotation(sourcePin)
+        srcPin.coordinate = src
+        srcPin.title = "ฉัน"
+        desPin.coordinate = des
+        desPin.title = "ผู้ประสบภัย"
         
-        let sourcePlaceMark = MKPlacemark(coordinate: sourceLocation)
-        let destinationPlaceMark = MKPlacemark(coordinate: destinationLocation)
+        mapView.addAnnotations([srcPin, desPin])
         
-        let directionRequest = MKDirections.Request()
-        directionRequest.source = MKMapItem(placemark: sourcePlaceMark)
-        directionRequest.destination = MKMapItem(placemark: destinationPlaceMark)
-        directionRequest.transportType = .automobile
+        let srcPlaceMark = MKPlacemark(coordinate: src)
+        let desPlaceMark = MKPlacemark(coordinate: des)
         
-        let directions = MKDirections(request: directionRequest)
+        let dirRequest:MKDirections.Request = MKDirections.Request()
+        dirRequest.source = MKMapItem(placemark: srcPlaceMark)
+        dirRequest.destination = MKMapItem(placemark: desPlaceMark)
+        dirRequest.transportType = .automobile
+        
+        let directions = MKDirections(request: dirRequest)
         directions.calculate { (response, error) in
             guard let directionResonse = response else {
                 if let error = error {
@@ -234,21 +239,13 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
                 }
                 return
             }
-            
-            //get route and assign to our route variable
             let route = directionResonse.routes[0]
-            
-            //add rout to our mapview
             self.mapView.addOverlay(route.polyline, level: .aboveRoads)
             
-            //setting rect of our mapview to fit the two locations
             let rect = route.polyline.boundingMapRect
             self.mapView.setRegion(MKCoordinateRegion(rect), animated: true)
         }
-        
-        //set delegate for mapview
         self.mapView.delegate = self
-
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

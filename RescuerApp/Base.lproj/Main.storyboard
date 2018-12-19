@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gll-1r-Vkq">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gll-1r-Vkq">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -482,6 +482,7 @@
                     <connections>
                         <outlet property="addressLabel" destination="gFU-OA-41u" id="kaW-iI-mWb"/>
                         <outlet property="completeButton" destination="ikR-gG-ir9" id="Ttd-OV-Izp"/>
+                        <outlet property="mapView" destination="h71-ww-IM1" id="Spr-RQ-Rfo"/>
                         <outlet property="phoneNumber" destination="sRr-bB-n7O" id="Rkb-1j-kIT"/>
                         <outlet property="titleLabel" destination="bov-W3-WXx" id="cmV-ym-dbP"/>
                     </connections>
@@ -559,6 +560,7 @@
                     </view>
                     <connections>
                         <outlet property="addressLabel" destination="4vU-Tk-JbT" id="3MY-4O-3FD"/>
+                        <outlet property="mapView" destination="mfd-rQ-ZYC" id="cqY-6Q-M0g"/>
                         <outlet property="nameLabel" destination="m2E-Oz-r5f" id="7fQ-iv-ckY"/>
                         <outlet property="phoneLabel" destination="d3k-uK-AKE" id="sEx-op-AVC"/>
                     </connections>
@@ -569,9 +571,9 @@
         </scene>
     </scenes>
     <resources>
-        <image name="addressPin" width="64" height="64"/>
-        <image name="historyUser" width="30" height="30"/>
-        <image name="lightRequest" width="30" height="30"/>
-        <image name="phoneCall" width="64" height="64"/>
+        <image name="addressPin" width="418.90908813476562" height="418.90908813476562"/>
+        <image name="historyUser" width="48" height="48"/>
+        <image name="lightRequest" width="48" height="48"/>
+        <image name="phoneCall" width="418.90908813476562" height="418.90908813476562"/>
     </resources>
 </document>
