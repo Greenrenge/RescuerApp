@@ -44,7 +44,6 @@
 		AB75ADA321C82F2900D2A239 /* RescueDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB75ADA221C82F2900D2A239 /* RescueDetailViewController.swift */; };
 		AB75ADA521C86FF600D2A239 /* HistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB75ADA421C86FF600D2A239 /* HistoryTableViewCell.swift */; };
 		AB90BB8F21C8862C00A5F02F /* HistoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB90BB8E21C8862C00A5F02F /* HistoryDetailViewController.swift */; };
-		AB90BB9221C9C8B400A5F02F /* CustomPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB90BB9121C9C8B400A5F02F /* CustomPin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,7 +110,6 @@
 		AB75ADA221C82F2900D2A239 /* RescueDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RescueDetailViewController.swift; sourceTree = "<group>"; };
 		AB75ADA421C86FF600D2A239 /* HistoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableViewCell.swift; sourceTree = "<group>"; };
 		AB90BB8E21C8862C00A5F02F /* HistoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDetailViewController.swift; sourceTree = "<group>"; };
-		AB90BB9121C9C8B400A5F02F /* CustomPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,7 +245,6 @@
 				AB75AD9C21C81A1900D2A239 /* Request.swift */,
 				AB75AD9A21C8189500D2A239 /* RequestTableViewCell.swift */,
 				AB75ADA421C86FF600D2A239 /* HistoryTableViewCell.swift */,
-				AB90BB9121C9C8B400A5F02F /* CustomPin.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -431,7 +428,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB90BB9221C9C8B400A5F02F /* CustomPin.swift in Sources */,
 				AB75AD3521C8005900D2A239 /* ViewController.swift in Sources */,
 				AB75AD9D21C81A1900D2A239 /* Request.swift in Sources */,
 				AB75AD9B21C8189500D2A239 /* RequestTableViewCell.swift in Sources */,
