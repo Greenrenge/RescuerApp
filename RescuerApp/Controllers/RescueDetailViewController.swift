@@ -214,7 +214,6 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
         let location = locations.last! as CLLocation
         
         let src = CLLocationCoordinate2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
-//        let src = CLLocationCoordinate2D(latitude: 13.8551301, longitude: 100.5333459)
         let des = CLLocationCoordinate2D(latitude: requestLocation.latitude, longitude: requestLocation.longitude)
         
         srcPin.coordinate = src
