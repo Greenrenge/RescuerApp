@@ -115,57 +115,76 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
     }
     
     @IBAction func onClickRescue(_ sender: UIButton) {
-        guard request.status == 0 else {
-            let title = "เกิดข้อผิดพลาด"
-            let rescuing = "คำขอได้รับการช่วยเหลือแล้ว"
-            let completing = "คำขอเสร็จสิ้นแล้ว"
-            let canceling = "คำขอถูกยกเลิก"
-            var message = ""
-            
-            if request.status == 1 {
-                message = rescuing
-            } else if request.status == 2 {
-                message = completing
-            } else if request.status == 3 {
-                message = canceling
-            }
-            
-            let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
-            alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default) { action in
-                self.navigationController?.popViewController(animated: true)
-            })
-            self.present(alert, animated: true, completion: nil)
-            return
-        }
-        let rescuerId = Auth.auth().currentUser?.uid
-        let rescuerRef = Firestore.firestore().collection("officers").whereField("officerId", isEqualTo: rescuerId!)
+        self.rescueButton.isEnabled = false
         
-        rescuerRef.getDocuments { (document, error) in
-            if let document = document {
-                var rescuer = document.documents[0].data()
-                let id = rescuer["officerId"]
-                let name = rescuer["nameOfficer"]
-                let ref = Firestore.firestore().collection("requests").document(self.request.documentID)
+        let alert = UIAlertController(title: "ช่วยเหลือ", message: "คุณต้องการช่วยเหลือใช่หรือไม่ ?", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "ไม่ใช่", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "ใช่", style: .default, handler: {
+            action in
+            
+            if (CheckInternet.Connection()) {
+                guard self.request.status == 0 else {
+                    let title = "เกิดข้อผิดพลาด"
+                    let rescuing = "คำขอได้รับการช่วยเหลือแล้ว"
+                    let completing = "คำขอเสร็จสิ้นแล้ว"
+                    let canceling = "คำขอถูกยกเลิก"
+                    var message = ""
+                    
+                    if self.request.status == 1 {
+                        message = rescuing
+                    } else if self.request.status == 2 {
+                        message = completing
+                    } else if self.request.status == 3 {
+                        message = canceling
+                    }
+                    
+                    let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+                    alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default) { action in
+                        self.navigationController?.popViewController(animated: true)
+                    })
+                    self.present(alert, animated: true, completion: nil)
+                    return
+                }
                 
-                guard id != nil && name != nil else { return }
-                ref.updateData([
-                    "rescuerName": name!,
-                    "rescuerID": id!,
-                    "rescuerLocation": GeoPoint(latitude: 13.7270068, longitude: 100.5259204),
-                    "status": 1
-                ]) { err in
-                    if let err = err {
-                        print("Error Updating: \(err)")
+                let rescuerId = Auth.auth().currentUser?.uid
+                let rescuerRef = Firestore.firestore().collection("officers").whereField("officerId", isEqualTo: rescuerId!)
+                
+                rescuerRef.getDocuments { (document, error) in
+                    if let document = document {
+                        var rescuer = document.documents[0].data()
+                        let id = rescuer["officerId"]
+                        let name = rescuer["nameOfficer"]
+                        let ref = Firestore.firestore().collection("requests").document(self.request.documentID)
+                        
+                        guard id != nil && name != nil else { return }
+                        ref.updateData([
+                            "rescuerName": name!,
+                            "rescuerID": id!,
+                            "rescuerLocation": GeoPoint(latitude: 13.7270068, longitude: 100.5259204),
+                            "status": 1
+                        ]) { err in
+                            if let err = err {
+                                self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
+                                self.rescueButton.isEnabled = true
+                            } else {
+                                rescuer["rescuerLocation"] = GeoPoint(latitude: 13.7270068, longitude: 100.5259204)
+                                let controller = RescueDetailViewController.fromStoryboard(request: self.request, rescuer: rescuer, requestId: self.requestId)
+                                self.navigationController?.pushViewController(controller, animated: true)
+                            }
+                        }
                     } else {
-                        rescuer["rescuerLocation"] = GeoPoint(latitude: 13.7270068, longitude: 100.5259204)
-                        let controller = RescueDetailViewController.fromStoryboard(request: self.request, rescuer: rescuer, requestId: self.requestId)
-                        self.navigationController?.pushViewController(controller, animated: true)
+                        self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
                     }
                 }
             } else {
-                print("Rescuer does not exist")
+                self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต")
             }
-        }
+            
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
+    
     }
     
     private func startListening() {
