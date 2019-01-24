@@ -29,6 +29,9 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if  let arrayOfTabBarItems = self.tabBarController?.tabBar.items as AnyObject as? NSArray,let tabBarItem = arrayOfTabBarItems[0] as? UITabBarItem {
+            tabBarItem.isEnabled = false
+        }
         setNeedsStatusBarAppearanceUpdate()
         startListening()
         

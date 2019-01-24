@@ -20,12 +20,10 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setNeedsStatusBarAppearanceUpdate()
+        if let arrayOfTabBarItems = self.tabBarController?.tabBar.items as AnyObject as? NSArray, let tabBarItem = arrayOfTabBarItems[0] as? UITabBarItem {
+            tabBarItem.isEnabled = true
+        }
         startListening()
-        
-        let icon = UIImage(named: "padlock")?.withRenderingMode(.alwaysOriginal)
-        let logoutButton = UIBarButtonItem(image: icon, style: UIBarButtonItem.Style.plain, target: self, action: #selector(RequestViewController.logout))
-        self.navigationItem.rightBarButtonItem = logoutButton
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -37,6 +35,9 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        let icon = UIImage(named: "padlock")?.withRenderingMode(.alwaysOriginal)
+        let logoutButton = UIBarButtonItem(image: icon, style: UIBarButtonItem.Style.plain, target: self, action: #selector(RequestViewController.logout))
+        self.navigationItem.rightBarButtonItem = logoutButton
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
