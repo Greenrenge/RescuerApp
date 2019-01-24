@@ -78,7 +78,6 @@ class Request {
     
     init? (document: QueryDocumentSnapshot) {
         let data = document.data()
-        print(data)
         self.documentID = document.documentID
         self.phoneNumber = data["phoneNumber"] as! String
         self.requestLocation = data["requestLocation"] as! GeoPoint

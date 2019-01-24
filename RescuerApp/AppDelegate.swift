@@ -8,6 +8,7 @@
 import UIKit
 import Firebase
 import FirebaseAuth
+import FirebaseFirestore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,9 +18,91 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        FirebaseApp.configure()
+        
+        if (CheckInternet.Connection()) {
+            FirebaseApp.configure()
+            
+            Auth.auth().addStateDidChangeListener { (auth, user) in
+                if user != nil {
+                    
+                    guard let user = Auth.auth().currentUser else {
+                        return
+                    }
+                    let rescuerID = user.uid
+                    let query = Firestore.firestore().collection("requests")
+                        .whereField("rescuerID", isEqualTo: rescuerID)
+                        .order(by: "created_at", descending: true).limit(to: 1)
+                    
+                    query.getDocuments { (snapshot, error) in
+                        if let error = error {
+                            print("Oh no! Got an error! \(error.localizedDescription)")
+                            return
+                        }
+                        
+                        guard let snapshot = snapshot else { return }
+                        let requestDocuments = snapshot.documents
+                        
+                        if (requestDocuments.count == 0) {
+                            self.toMainPage()
+                            return
+                        } else {
+                            let requestDocument = requestDocuments[0]
+                            print("I have this request \(requestDocument.data())")
+                            
+                            if (requestDocument.get("status") as! Int == 1) {
+                                let request = Request(document: requestDocument)
+                                let rescuer = requestDocument.data()
+                                let requestID = request?.documentID
+                                self.toMapPage(request: request!, rescuer: rescuer, requestID: requestID!)
+                                return
+                            } else {
+                                self.toMainPage()
+                                return
+                            }
+                        }
+                    }
+                    
+                } else {
+                    self.toSignInPage()
+                    return
+                }
+            }
+        } else {
+            self.toNoInternet()
+        }
         
         return true
+    }
+    
+    func toNoInternet() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "NoInternetController")
+        self.window?.rootViewController = vc
+        self.window?.makeKeyAndVisible()
+    }
+    
+    func toMainPage() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "TabBarController")
+        self.window?.rootViewController = vc
+        self.window?.makeKeyAndVisible()
+    }
+    
+    func toMapPage(request: Request, rescuer: [String: Any], requestID: String) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let tab = storyboard.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
+        let navi = tab.viewControllers![0] as! UINavigationController
+        let map = RescueDetailViewController.fromStoryboard(request: request, rescuer: rescuer, requestId: requestID)
+        navi.pushViewController(map, animated: true)
+        self.window?.rootViewController = tab
+        self.window?.makeKeyAndVisible()
+    }
+    
+    func toSignInPage() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "SignInController")
+        self.window?.rootViewController = vc
+        self.window?.makeKeyAndVisible()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

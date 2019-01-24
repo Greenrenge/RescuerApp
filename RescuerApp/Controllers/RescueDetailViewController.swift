@@ -117,44 +117,61 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
     }
 
     @IBAction func onClickComplete(_ sender: UIButton) {
-        let rescuerId = self.rescuer["officerId"]
-        let rescuerRef = Firestore.firestore().collection("officers").whereField("officerId", isEqualTo: rescuerId!)
-        rescuerRef.getDocuments { (document, error) in
-            if let document = document {
-                let docId = document.documents[0].documentID
-                let phoneNumber = self.request.phoneNumber
-                let reqLocation = self.request.requestLocation
+        self.completeButton.isEnabled = false
+        
+        let alert = UIAlertController(title: "เสร็จสิ้น", message: "ภารกิจเสร็จสิ้นแล้วใช่หรือไม่ ?", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "ไม่ใช่", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "ใช่", style: .default, handler: {
+            action in
+            if (CheckInternet.Connection()) {
                 let rescuerId = self.rescuer["officerId"]
-                let rescuerName = self.rescuer["nameOfficer"]
-                let rescuerLocation = self.rescuer["rescuerLocation"]
-                
-                let historyRef = Firestore.firestore().collection("officers").document(docId).collection("histories")
-                historyRef.addDocument(data: [
-                    "phoneNumber": phoneNumber,
-                    "requestLocation": reqLocation,
-                    "rescuerID": rescuerId!,
-                    "rescuerName": rescuerName!,
-                    "rescuerLocation": rescuerLocation!,
-                    "status": 2,
-                ]) { err in
-                    if let err = err {
-                        print("Error Adding: \(err)")
-                    } else {
-                        let requestRef = Firestore.firestore().collection("requests").document(self.request.documentID)
-                        requestRef.updateData(["status": 2]) { err in
-                            if let err = err {
-                                print("Error Updating: \(err)")
-                            } else {
-                                let viewControllers: [UIViewController] = self.navigationController!.viewControllers as [UIViewController]
-                                self.navigationController!.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
-                            }
+                let rescuerRef = Firestore.firestore().collection("officers").whereField("officerId", isEqualTo: rescuerId!)
+                rescuerRef.getDocuments { (document, error) in
+                    if let document = document {
+                        let docId = document.documents[0].documentID
+                        let phoneNumber = self.request.phoneNumber
+                        let reqLocation = self.request.requestLocation
+                        let rescuerId = self.rescuer["officerId"]
+                        let rescuerName = self.rescuer["nameOfficer"]
+                        let rescuerLocation = self.rescuer["rescuerLocation"]
+                        
+                        let historyRef = Firestore.firestore().collection("officers").document(docId).collection("histories")
+                        historyRef.addDocument(data: [
+                            "phoneNumber": phoneNumber,
+                            "requestLocation": reqLocation,
+                            "rescuerID": rescuerId!,
+                            "rescuerName": rescuerName!,
+                            "rescuerLocation": rescuerLocation!,
+                            "status": 2,
+                            ]) { err in
+                                if let err = err {
+                                    print("Error Adding: \(err)")
+                                } else {
+                                    let requestRef = Firestore.firestore().collection("requests").document(self.request.documentID)
+                                    requestRef.updateData(["status": 2]) { err in
+                                        if let err = err {
+                                            self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
+                                            self.completeButton.isEnabled = true
+                                        } else {
+                                            let viewControllers: [UIViewController] = self.navigationController!.viewControllers as [UIViewController]
+                                            self.navigationController!.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
+                                        }
+                                    }
+                                }
                         }
+                    } else {
+                        self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
                     }
                 }
             } else {
-                print("Error: \(error!)")
+                self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต")
             }
-        }
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
+        
+        
     }
     
     private func startListening() {

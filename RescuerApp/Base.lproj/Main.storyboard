@@ -1,18 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="gll-1r-Vkq">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="K2L-2W-uNu">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--View Controller-->
+        <scene sceneID="5Mg-hI-pLh">
+            <objects>
+                <viewController storyboardIdentifier="NoInternetController" id="YlP-51-Dtw" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="hfS-zT-3BQ">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="connection" translatesAutoresizingMaskIntoConstraints="NO" id="3uZ-yN-Zwj">
+                                <rect key="frame" x="35" y="159" width="250" height="250"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="vvn-45-bz4" firstAttribute="trailing" secondItem="3uZ-yN-Zwj" secondAttribute="trailing" constant="35" id="GGO-iB-QOJ"/>
+                            <constraint firstItem="3uZ-yN-Zwj" firstAttribute="top" secondItem="vvn-45-bz4" secondAttribute="top" constant="139" id="Mko-OW-NN2"/>
+                            <constraint firstItem="vvn-45-bz4" firstAttribute="bottom" secondItem="3uZ-yN-Zwj" secondAttribute="bottom" constant="159" id="aLJ-rE-UlB"/>
+                            <constraint firstItem="3uZ-yN-Zwj" firstAttribute="leading" secondItem="vvn-45-bz4" secondAttribute="leading" constant="35" id="mtt-7p-hhf"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="vvn-45-bz4"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="CDh-xo-zCz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1018.125" y="-1648.943661971831"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="ctm-3k-RYN">
+            <objects>
+                <viewController id="K2L-2W-uNu" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="E5k-Ra-e1d">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="c7z-xg-l9L"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Rgl-WF-YRL" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1018" y="-914"/>
+        </scene>
         <!--Sign In View Controller-->
         <scene sceneID="X7t-dk-qSQ">
             <objects>
-                <viewController id="gll-1r-Vkq" customClass="SignInViewController" customModule="RescuerApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SignInController" id="gll-1r-Vkq" customClass="SignInViewController" customModule="RescuerApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="IFf-l6-mWP">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -158,7 +199,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="bUX-QN-4Ai" id="sjQ-4r-zeC"/>
-                        <segue destination="F1K-Rf-wl2" kind="show" id="Shv-Od-2Je"/>
+                        <segue destination="F1K-Rf-wl2" kind="show" identifier="HistorySegue" id="Shv-Od-2Je"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="h6g-cI-Q9I" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -242,7 +283,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="aAX-9c-xG3">
             <objects>
-                <tabBarController id="Jtu-BO-C3O" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="TabBarController" id="Jtu-BO-C3O" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="MNu-bP-adD">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -389,7 +430,7 @@
                         <outlet property="addressLabel" destination="GuS-pQ-vOg" id="hDX-Cs-eeY"/>
                         <outlet property="mapView" destination="5Nu-hI-4aM" id="2Oo-8z-cp3"/>
                         <outlet property="phoneNumber" destination="wbE-wq-ZBS" id="akz-cB-Tqr"/>
-                        <outlet property="rescueButton" destination="GnZ-dz-zRI" id="ZZy-Fs-0uu"/>
+                        <outlet property="rescueButton" destination="GnZ-dz-zRI" id="Chx-h4-h3K"/>
                         <outlet property="titleLabel" destination="eZ8-On-XTT" id="MH1-GC-Ftw"/>
                         <segue destination="kkK-ma-T6p" kind="show" identifier="RescueDetailSegue" id="LJg-Ed-1Km"/>
                     </connections>
@@ -581,6 +622,7 @@
     </scenes>
     <resources>
         <image name="addressPin" width="64" height="64"/>
+        <image name="connection" width="200" height="200"/>
         <image name="historyUser" width="30" height="30"/>
         <image name="lightRequest" width="30" height="30"/>
         <image name="phoneCall" width="64" height="64"/>
