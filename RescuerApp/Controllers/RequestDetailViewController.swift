@@ -48,34 +48,8 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
         phoneNumber.isUserInteractionEnabled = true
         phoneNumber.addGestureRecognizer(phoneTap)
         
-        let longitude: CLLocationDegrees = request.requestLocation.longitude
-        let latitude: CLLocationDegrees = request.requestLocation.latitude
-        
-        let location = CLLocation(latitude: latitude, longitude: longitude)
-        
-        CLGeocoder().reverseGeocodeLocation(location, completionHandler: {(placemarks, error) -> Void in
-            
-            if error != nil {
-                print("Reverse geocoder failed with error" + error!.localizedDescription)
-                return
-            }
-            
-            if (placemarks?.count)! > 0 {
-                let pm = placemarks![0]
-                let name = pm.name ?? ""
-                let subDistrict = pm.subLocality ?? ""
-                let district = pm.subAdministrativeArea ?? ""
-                let province = pm.locality ?? ""
-                
-                let address = "\(String(describing: subDistrict)), \(String(describing: district)), \(String(describing: province))"
-                
-                self.titleLabel.text = name
-                self.addressLabel.text = "\(address)\n"
-            }
-            else {
-                print("Problem with the data received from geocoder")
-            }
-        })
+        self.titleLabel.text = request.requestName
+        self.addressLabel.text = "\(request.requestAddress)\n"
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -98,7 +72,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
             locationManager.startUpdatingLocation()
         }
         else {
-            showMsg(msgTitle: "Cannot Access Location Service", msgText: "Do not have Location Services or permission is not given")
+            showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "ไม่สามารถเข้าถึงตำแหน่งได้")
         }
         
     }
@@ -150,6 +124,36 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
                     return
                 }
                 
+                let ref = Firestore.firestore().collection("request").document(self.request.documentID);
+                
+                ref.getDocument { (document, error) in
+                    if let document = document, document.exists {
+                        let created_at = document.get("created_at") as! Date
+                        let read_at = Date()
+                        let components = Calendar.current.dateComponents([.second], from: created_at, to: read_at)
+                        let second_between = components.second!
+                        if (second_between > 30) {
+                            self.stopListening()
+                            Firestore.firestore().collection("requests").document((self.request.documentID)).updateData([
+                                "status": 3
+                            ]) { error in
+                                if let error = error {
+                                    self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
+                                } else {
+                                    let alert = UIAlertController(title: "เกิดข้อผิดพลาด", message: "คำขอถูกยกเลิก", preferredStyle: UIAlertController.Style.alert)
+                                    alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default) { action in
+                                        self.navigationController?.popViewController(animated: true)
+                                    })
+                                    self.present(alert, animated: true, completion: nil)
+                                    return
+                                }
+                            }
+                        }
+                    } else {
+                        self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
+                    }
+                }
+                
                 let rescuerId = Auth.auth().currentUser?.uid
                 let rescuerRef = Firestore.firestore().collection("officers").whereField("officerId", isEqualTo: rescuerId!)
                 
@@ -167,7 +171,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
                             "rescuerLocation": GeoPoint(latitude: 13.7270068, longitude: 100.5259204),
                             "status": 1
                         ]) { err in
-                            if let err = err {
+                            if err != nil {
                                 self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
                                 self.rescueButton.isEnabled = true
                             } else {
@@ -191,17 +195,21 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
     }
     
     private func startListening() {
-        let requestRef = Firestore.firestore().collection("requests").document(requestId)
-        statusListener = requestRef.addSnapshotListener { (snapshot, error) in
-            if let error = error {
-                print ("I got an error retrieving requests: \(error)")
-                return
+        if (CheckInternet.Connection()) {
+            let requestRef = Firestore.firestore().collection("requests").document(requestId)
+            statusListener = requestRef.addSnapshotListener { (snapshot, error) in
+                if let error = error {
+                    print (error.localizedDescription)
+                    self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต")
+                    return
+                }
+                guard let snapshot = snapshot else { return }
+                let requestData = snapshot.data()
+                self.request.status = requestData?["status"] as! Int
             }
-            guard let snapshot = snapshot else { return }
-            let requestData = snapshot.data()
-            self.request.status = requestData?["status"] as! Int
+        } else {
+            self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต")
         }
-        
     }
     
     private func stopListening() {
@@ -212,7 +220,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
     private func showMsg(msgTitle: String, msgText: String) {
         let alert = UIAlertController(title: msgTitle, message: msgText, preferredStyle: UIAlertController.Style.alert)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+        alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default, handler: nil))
         
         self.present(alert, animated: true, completion: nil)
     }
@@ -223,7 +231,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
             else {
-                showMsg(msgTitle: "Cannot Access Phone Call", msgText: "Do not have phone call or permission is not given")
+                showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "ไม่สามารถเข้าถึงการโทรได้")
             }
         }
     }
@@ -256,7 +264,8 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
         directions.calculate { (response, error) in
             guard let directionResonse = response else {
                 if let error = error {
-                    print("we have error getting directions==\(error.localizedDescription)")
+                    print(error.localizedDescription)
+                    self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
                 }
                 return
             }
@@ -270,7 +279,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        showMsg(msgTitle: "Cannot Access Location Service", msgText: "Do not have Location Services or permission is not given")
+        showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "ไม่สามารถเข้าถึงตำแหน่งได้")
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {

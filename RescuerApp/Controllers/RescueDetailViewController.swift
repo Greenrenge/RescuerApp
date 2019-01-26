@@ -50,34 +50,8 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
         phoneNumber.isUserInteractionEnabled = true
         phoneNumber.addGestureRecognizer(phoneTap)
         
-        let longitude: CLLocationDegrees = request.requestLocation.longitude
-        let latitude: CLLocationDegrees = request.requestLocation.latitude
-        
-        let location = CLLocation(latitude: latitude, longitude: longitude)
-        
-        CLGeocoder().reverseGeocodeLocation(location, completionHandler: {(placemarks, error) -> Void in
-            
-            if error != nil {
-                print("Reverse geocoder failed with error" + error!.localizedDescription)
-                return
-            }
-            
-            if (placemarks?.count)! > 0 {
-                let pm = placemarks![0]
-                let name = pm.name ?? ""
-                let subDistrict = pm.subLocality ?? ""
-                let district = pm.subAdministrativeArea ?? ""
-                let province = pm.locality ?? ""
-                
-                let address = "\(String(describing: subDistrict)), \(String(describing: district)), \(String(describing: province))"
-                
-                self.titleLabel.text = name
-                self.addressLabel.text = address
-            }
-            else {
-                print("Problem with the data received from geocoder")
-            }
-        })
+        self.titleLabel.text = request.requestName
+        self.addressLabel.text = request.requestAddress
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -135,6 +109,8 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
                         let docId = document.documents[0].documentID
                         let phoneNumber = self.request.phoneNumber
                         let reqLocation = self.request.requestLocation
+                        let requestName = self.request.requestName
+                        let requestAddress = self.request.requestAddress
                         let rescuerId = self.rescuer["officerId"]
                         let rescuerName = self.rescuer["nameOfficer"]
                         let rescuerLocation = self.rescuer["rescuerLocation"]
@@ -143,6 +119,8 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
                         historyRef.addDocument(data: [
                             "phoneNumber": phoneNumber,
                             "requestLocation": reqLocation,
+                            "requestName": requestName,
+                            "requestAddress": requestAddress,
                             "rescuerID": rescuerId!,
                             "rescuerName": rescuerName!,
                             "rescuerLocation": rescuerLocation!,
@@ -154,6 +132,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
                                     let requestRef = Firestore.firestore().collection("requests").document(self.request.documentID)
                                     requestRef.updateData(["status": 2]) { err in
                                         if let err = err {
+                                            print("Error Adding: \(err)")
                                             self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
                                             self.completeButton.isEnabled = true
                                         } else {
@@ -178,27 +157,31 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
     }
     
     private func startListening() {
-        let requestRef = Firestore.firestore().collection("requests").document(requestId)
-        statusListener = requestRef.addSnapshotListener { (snapshot, error) in
-            if let error = error {
-                print ("I got an error retrieving requests: \(error)")
-                return
+        if (CheckInternet.Connection()) {
+            let requestRef = Firestore.firestore().collection("requests").document(requestId)
+            statusListener = requestRef.addSnapshotListener { (snapshot, error) in
+                if let error = error {
+                    print ("I got an error retrieving requests: \(error)")
+                    return
+                }
+                guard let snapshot = snapshot else { return }
+                let requestData = snapshot.data()
+                let status = requestData?["status"] as! Int
+                
+                let title = "เกิดข้อผิดพลาด"
+                let canceling = "คำขอถูกยกเลิก"
+                
+                if status == 3 {
+                    let alert = UIAlertController(title: title, message: canceling, preferredStyle: UIAlertController.Style.alert)
+                    alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default) { action in
+                        let viewControllers: [UIViewController] = self.navigationController!.viewControllers as [UIViewController]
+                        self.navigationController!.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
+                    })
+                    self.present(alert, animated: true, completion: nil)
+                }
             }
-            guard let snapshot = snapshot else { return }
-            let requestData = snapshot.data()
-            let status = requestData?["status"] as! Int
-            
-            let title = "เกิดข้อผิดพลาด"
-            let canceling = "คำขอถูกยกเลิก"
-            
-            if status == 3 {
-                let alert = UIAlertController(title: title, message: canceling, preferredStyle: UIAlertController.Style.alert)
-                alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default) { action in
-                    let viewControllers: [UIViewController] = self.navigationController!.viewControllers as [UIViewController]
-                    self.navigationController!.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
-                })
-                self.present(alert, animated: true, completion: nil)
-            }
+        } else {
+            self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต")
         }
         
     }
@@ -222,7 +205,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
             else {
-                showMsg(msgTitle: "Cannot Access Phone Call", msgText: "Do not have phone call or permission is not given")
+                showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
             }
         }
     }
@@ -255,7 +238,8 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
         directions.calculate { (response, error) in
             guard let directionResonse = response else {
                 if let error = error {
-                    print("we have error getting directions==\(error.localizedDescription)")
+                    print(error.localizedDescription)
+                    self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
                 }
                 return
             }
@@ -269,7 +253,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        showMsg(msgTitle: "Cannot Access Location Service", msgText: "Do not have Location Services or permission is not given")
+        showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "ไม่สามารถเข้าถึงตำแหน่งได้")
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {

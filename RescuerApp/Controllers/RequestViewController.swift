@@ -61,34 +61,8 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
         
         let request = requestData[indexPath.row]
         
-        let longitude: CLLocationDegrees = request.requestLocation.longitude
-        let latitude: CLLocationDegrees = request.requestLocation.latitude
+        cell.populate(name: request.requestName, address: request.requestAddress)
         
-        let location = CLLocation(latitude: latitude, longitude: longitude)
-        
-        CLGeocoder().reverseGeocodeLocation(location, completionHandler: {(placemarks, error) -> Void in
-            
-            if error != nil {
-                print("Reverse geocoder failed with error" + error!.localizedDescription)
-                return
-            }
-            
-            if (placemarks?.count)! > 0 {
-                let pm = placemarks![0]
-                let name = pm.name ?? ""
-                let subDistrict = pm.subLocality ?? ""
-                let district = pm.subAdministrativeArea ?? ""
-                let province = pm.locality ?? ""
-                
-                let address = "\(String(describing: subDistrict)), \(String(describing: district)), \(String(describing: province))"
-                
-                cell.populate(name: name, address: address)
-            }
-            else {
-                print("Problem with the data received from geocoder")
-                cell.populate(name: "Not Founded", address: "Not Founded")
-            }
-        })
         return cell
     }
     
@@ -100,20 +74,25 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
     }
 
     private func startListening() {
-        let requestRef = Firestore.firestore().collection("requests").whereField("status", isEqualTo: 0).limit(to: 10)
-        requestListener = requestRef.addSnapshotListener { (snapshot, error) in
-            if let error = error {
-                print ("I got an error retrieving requests: \(error)")
-                return
-            }
-            guard let snapshot = snapshot else { return }
-            self.requestData = []
-            for requestDocument in snapshot.documents {
-                if let newRequest = Request(document: requestDocument) {
-                    self.requestData.append(newRequest)
+        if (CheckInternet.Connection()) {
+            let requestRef = Firestore.firestore().collection("requests").whereField("status", isEqualTo: 0).limit(to: 10)
+            requestListener = requestRef.addSnapshotListener { (snapshot, error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
+                    return
                 }
+                guard let snapshot = snapshot else { return }
+                self.requestData = []
+                for requestDocument in snapshot.documents {
+                    if let newRequest = Request(document: requestDocument) {
+                        self.requestData.append(newRequest)
+                    }
+                }
+                self.tableView.reloadData()
             }
-            self.tableView.reloadData()
+        } else {
+            self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต")
         }
         
     }
@@ -123,13 +102,27 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
         requestListener = nil
     }
     
+    private func showMsg(msgTitle: String, msgText: String) {
+        let alert = UIAlertController(title: msgTitle, message: msgText, preferredStyle: UIAlertController.Style.alert)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     @objc private func logout(sender: UIBarButtonItem) {
-        do {
-            try Auth.auth().signOut()
-            self.dismiss(animated: true, completion: nil)
-        } catch let err {
-            print(err)
-        }
+        let alert = UIAlertController(title: "ออกจากระบบ", message: "คุณต้องการออกจากระบบใช่หรือไม่", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ไม่ใช่", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "ใช่", style: .default, handler: {
+            action in
+            do {
+                try Auth.auth().signOut()
+                self.dismiss(animated: true, completion: nil)
+            } catch let err {
+                print(err.localizedDescription)
+                self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
+            }
+        }))
     }
     
 }

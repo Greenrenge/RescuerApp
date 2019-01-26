@@ -31,7 +31,8 @@ class SignInViewController: UIViewController {
             Auth.auth().signIn(withEmail: email, password: password) { (user, error) in
                 if let error = error {
                     print(error.localizedDescription)
-                    return
+                    let alert = UIAlertController(title: "เกิดข้อผิดพลาด", message: "โปรดลองใหม่อีกครั้ง", preferredStyle: UIAlertController.Style.alert)
+                    self.present(alert, animated: true, completion: nil)
                 }
                 self.performSegue(withIdentifier: "signed", sender: nil)
             }

@@ -35,34 +35,8 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
         phoneLabel.isUserInteractionEnabled = true
         phoneLabel.addGestureRecognizer(phoneTap)
         
-        let longitude: CLLocationDegrees = request.requestLocation.longitude
-        let latitude: CLLocationDegrees = request.requestLocation.latitude
-        
-        let location = CLLocation(latitude: latitude, longitude: longitude)
-        
-        CLGeocoder().reverseGeocodeLocation(location, completionHandler: {(placemarks, error) -> Void in
-            
-            if error != nil {
-                print("Reverse geocoder failed with error" + error!.localizedDescription)
-                return
-            }
-            
-            if (placemarks?.count)! > 0 {
-                let pm = placemarks![0]
-                let name = pm.name ?? ""
-                let subDistrict = pm.subLocality ?? ""
-                let district = pm.subAdministrativeArea ?? ""
-                let province = pm.locality ?? ""
-                
-                let address = "\(String(describing: subDistrict)), \(String(describing: district)), \(String(describing: province))"
-                
-                self.nameLabel.text = name
-                self.addressLabel.text = "\(address)\n"
-            }
-            else {
-                print("Problem with the data received from geocoder")
-            }
-        })
+        self.nameLabel.text = request.requestName
+        self.addressLabel.text = request.requestAddress
     }
     
     override func viewDidLoad() {
