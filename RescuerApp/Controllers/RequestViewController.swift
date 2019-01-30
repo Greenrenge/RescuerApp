@@ -123,6 +123,7 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
                 self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
             }
         }))
+        self.present(alert, animated: true, completion: nil)
     }
     
 }
