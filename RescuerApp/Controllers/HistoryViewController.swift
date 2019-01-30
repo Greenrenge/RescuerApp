@@ -34,7 +34,7 @@ class HistoryViewController: UIViewController, UITableViewDataSource, UITableVie
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        let icon = UIImage(named: "padlock")?.withRenderingMode(.alwaysOriginal)
+        let icon = UIImage(named: "logout")?.withRenderingMode(.alwaysOriginal)
         let logoutButton = UIBarButtonItem(image: icon, style: UIBarButtonItem.Style.plain, target: self, action: #selector(HistoryViewController.logout))
         self.navigationItem.rightBarButtonItem = logoutButton
     }

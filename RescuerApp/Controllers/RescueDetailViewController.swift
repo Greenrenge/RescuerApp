@@ -35,9 +35,9 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
         setNeedsStatusBarAppearanceUpdate()
         startListening()
         
-        titleLabel.text = "Loading..."
-        addressLabel.text = "Loading..."
-        phoneNumber.text = "Loading..."
+        titleLabel.text = "รอสักครู่..."
+        addressLabel.text = "รอสักครู่..."
+        phoneNumber.text = "รอสักครู่..."
         
         self.navigationItem.setHidesBackButton(true, animated:true);
         
@@ -61,6 +61,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(rescuer)
         
         // Ask for Authorisation from the User.
         self.locationManager.requestAlwaysAuthorization()
@@ -74,7 +75,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
             locationManager.startUpdatingLocation()
         }
         else {
-            showMsg(msgTitle: "Cannot Access Location Service", msgText: "Do not have Location Services or permission is not given")
+            showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "ไม่สามารถเข้าถึงตำแหน่งได้")
         }
     }
     
@@ -102,6 +103,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
         alert.addAction(UIAlertAction(title: "ใช่", style: .default, handler: {
             action in
             if (CheckInternet.Connection()) {
+                print(self.rescuer)
                 let rescuerId = self.rescuer["officerId"]
                 let rescuerRef = Firestore.firestore().collection("officers").whereField("officerId", isEqualTo: rescuerId!)
                 rescuerRef.getDocuments { (document, error) in
@@ -111,9 +113,8 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
                         let reqLocation = self.request.requestLocation
                         let requestName = self.request.requestName
                         let requestAddress = self.request.requestAddress
-                        let rescuerId = self.rescuer["officerId"]
                         let rescuerName = self.rescuer["nameOfficer"]
-                        let rescuerLocation = self.rescuer["rescuerLocation"]
+                        let rescuerLocation = self.rescuer["location"]
                         
                         let historyRef = Firestore.firestore().collection("officers").document(docId).collection("histories")
                         historyRef.addDocument(data: [
@@ -136,8 +137,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
                                             self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
                                             self.completeButton.isEnabled = true
                                         } else {
-                                            let viewControllers: [UIViewController] = self.navigationController!.viewControllers as [UIViewController]
-                                            self.navigationController!.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
+                                            self.navigationController?.popToRootViewController(animated: true)
                                         }
                                     }
                                 }
@@ -151,8 +151,8 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
             }
         }))
         
+        self.completeButton.isEnabled = true
         self.present(alert, animated: true, completion: nil)
-        
         
     }
     
@@ -162,6 +162,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
             statusListener = requestRef.addSnapshotListener { (snapshot, error) in
                 if let error = error {
                     print ("I got an error retrieving requests: \(error)")
+                    self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
                     return
                 }
                 guard let snapshot = snapshot else { return }
@@ -174,8 +175,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
                 if status == 3 {
                     let alert = UIAlertController(title: title, message: canceling, preferredStyle: UIAlertController.Style.alert)
                     alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default) { action in
-                        let viewControllers: [UIViewController] = self.navigationController!.viewControllers as [UIViewController]
-                        self.navigationController!.popToViewController(viewControllers[viewControllers.count - 3], animated: true)
+                        self.navigationController!.popToRootViewController(animated: true)
                     })
                     self.present(alert, animated: true, completion: nil)
                 }
@@ -194,7 +194,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
     private func showMsg(msgTitle: String, msgText: String) {
         let alert = UIAlertController(title: msgTitle, message: msgText, preferredStyle: UIAlertController.Style.alert)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+        alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default, handler: nil))
         
         self.present(alert, animated: true, completion: nil)
     }
@@ -220,7 +220,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
         let des = CLLocationCoordinate2D(latitude: requestLocation.latitude, longitude: requestLocation.longitude)
         
         srcPin.coordinate = src
-        srcPin.title = "ฉัน"
+        srcPin.title = "คุณอยู่ที่นี่"
         desPin.coordinate = des
         desPin.title = "ผู้ประสบภัย"
         

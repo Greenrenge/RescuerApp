@@ -35,7 +35,7 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        let icon = UIImage(named: "padlock")?.withRenderingMode(.alwaysOriginal)
+        let icon = UIImage(named: "logout")?.withRenderingMode(.alwaysOriginal)
         let logoutButton = UIBarButtonItem(image: icon, style: UIBarButtonItem.Style.plain, target: self, action: #selector(RequestViewController.logout))
         self.navigationItem.rightBarButtonItem = logoutButton
     }
@@ -57,7 +57,7 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "requestCell",
                                                  for: indexPath) as! RequestTableViewCell
-        cell.populate(name: "Loading...", address: "Loading...")
+        cell.populate(name: "รอสักครู่..", address: "รอสักครู่..")
         
         let request = requestData[indexPath.row]
         
@@ -105,7 +105,7 @@ class RequestViewController: UIViewController, UITableViewDataSource, UITableVie
     private func showMsg(msgTitle: String, msgText: String) {
         let alert = UIAlertController(title: msgTitle, message: msgText, preferredStyle: UIAlertController.Style.alert)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+        alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default, handler: nil))
         
         self.present(alert, animated: true, completion: nil)
     }

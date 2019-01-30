@@ -50,11 +50,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             print("I have this request \(requestDocument.data())")
                             
                             if (requestDocument.get("status") as! Int == 1) {
-                                let request = Request(document: requestDocument)
-                                let rescuer = requestDocument.data()
-                                let requestID = request?.documentID
-                                self.toMapPage(request: request!, rescuer: rescuer, requestID: requestID!)
-                                return
+                                let rescuerId = Auth.auth().currentUser?.uid
+                                let rescuerRef = Firestore.firestore().collection("officers").whereField("officerId", isEqualTo: rescuerId!)
+                                
+                                rescuerRef.getDocuments { (document, error) in
+                                    if let document = document {
+                                        let request = Request(document: requestDocument)
+                                        var rescuer = document.documents[0].data()
+                                        rescuer["location"] = request?.rescuerLocation
+                                        let requestID = request?.documentID
+                                        self.toMapPage(request: request!, rescuer: rescuer, requestID: requestID!)
+                                        return
+                                    }
+                                }
                             } else {
                                 self.toMainPage()
                                 return

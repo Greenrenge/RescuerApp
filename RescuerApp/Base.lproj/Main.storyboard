@@ -9,24 +9,41 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Internet Controller-->
         <scene sceneID="5Mg-hI-pLh">
             <objects>
-                <viewController storyboardIdentifier="NoInternetController" id="YlP-51-Dtw" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NoInternetController" id="YlP-51-Dtw" customClass="InternetController" customModule="RescuerApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="hfS-zT-3BQ">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="connection" translatesAutoresizingMaskIntoConstraints="NO" id="3uZ-yN-Zwj">
-                                <rect key="frame" x="35" y="159" width="250" height="250"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="connection" translatesAutoresizingMaskIntoConstraints="NO" id="3uZ-yN-Zwj">
+                                <rect key="frame" x="85" y="158" width="150" height="164"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="ไม่ได้เชื่อมต่ออินเทอร์เน็ต" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XAL-mr-bTj">
+                                <rect key="frame" x="73" y="339" width="175" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wOz-BV-GWo">
+                                <rect key="frame" x="98" y="368" width="125" height="30"/>
+                                <state key="normal" title="ลองใหม่อีกครั้ง"/>
+                                <connections>
+                                    <action selector="tryTapped:" destination="YlP-51-Dtw" eventType="touchUpInside" id="xiy-9E-iOZ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="vvn-45-bz4" firstAttribute="trailing" secondItem="3uZ-yN-Zwj" secondAttribute="trailing" constant="35" id="GGO-iB-QOJ"/>
-                            <constraint firstItem="3uZ-yN-Zwj" firstAttribute="top" secondItem="vvn-45-bz4" secondAttribute="top" constant="139" id="Mko-OW-NN2"/>
-                            <constraint firstItem="vvn-45-bz4" firstAttribute="bottom" secondItem="3uZ-yN-Zwj" secondAttribute="bottom" constant="159" id="aLJ-rE-UlB"/>
-                            <constraint firstItem="3uZ-yN-Zwj" firstAttribute="leading" secondItem="vvn-45-bz4" secondAttribute="leading" constant="35" id="mtt-7p-hhf"/>
+                            <constraint firstItem="wOz-BV-GWo" firstAttribute="leading" secondItem="vvn-45-bz4" secondAttribute="leading" constant="98" id="WTD-zj-Fpz"/>
+                            <constraint firstItem="vvn-45-bz4" firstAttribute="trailing" secondItem="3uZ-yN-Zwj" secondAttribute="trailing" constant="85" id="cyj-am-HcM"/>
+                            <constraint firstItem="vvn-45-bz4" firstAttribute="trailing" secondItem="XAL-mr-bTj" secondAttribute="trailing" constant="72" id="f0e-5Q-5W3"/>
+                            <constraint firstItem="vvn-45-bz4" firstAttribute="trailing" secondItem="wOz-BV-GWo" secondAttribute="trailing" constant="97" id="fZ5-HB-1vq"/>
+                            <constraint firstItem="XAL-mr-bTj" firstAttribute="leading" secondItem="vvn-45-bz4" secondAttribute="leading" constant="73" id="g74-xQ-EER"/>
+                            <constraint firstItem="3uZ-yN-Zwj" firstAttribute="top" secondItem="vvn-45-bz4" secondAttribute="top" constant="138" id="kvu-SA-nNP"/>
+                            <constraint firstItem="3uZ-yN-Zwj" firstAttribute="leading" secondItem="vvn-45-bz4" secondAttribute="leading" constant="85" id="mlG-SB-Muy"/>
+                            <constraint firstItem="wOz-BV-GWo" firstAttribute="top" secondItem="XAL-mr-bTj" secondAttribute="bottom" constant="8" id="tKd-Ev-i6r"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="vvn-45-bz4"/>
                     </view>
@@ -42,7 +59,18 @@
                     <view key="view" contentMode="scaleToFill" id="E5k-Ra-e1d">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Mask1024_1x" translatesAutoresizingMaskIntoConstraints="NO" id="TlP-Wv-fpd">
+                                <rect key="frame" x="35" y="159" width="250" height="250"/>
+                            </imageView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="c7z-xg-l9L" firstAttribute="trailing" secondItem="TlP-Wv-fpd" secondAttribute="trailing" constant="35" id="3WB-Fi-8oe"/>
+                            <constraint firstItem="TlP-Wv-fpd" firstAttribute="leading" secondItem="c7z-xg-l9L" secondAttribute="leading" constant="35" id="4IP-Rh-Udb"/>
+                            <constraint firstItem="TlP-Wv-fpd" firstAttribute="top" secondItem="c7z-xg-l9L" secondAttribute="top" constant="139" id="i10-Y5-pKu"/>
+                            <constraint firstItem="c7z-xg-l9L" firstAttribute="bottom" secondItem="TlP-Wv-fpd" secondAttribute="bottom" constant="159" id="ugE-Xf-aWs"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="c7z-xg-l9L"/>
                     </view>
                 </viewController>
@@ -77,13 +105,13 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" textContentType="email"/>
                             </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="E-MAIL" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HMU-aw-dp3">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="อีเมล" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HMU-aw-dp3">
                                 <rect key="frame" x="40" y="120" width="240" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="PASSWORD" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mGF-CJ-UrZ">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="รหัสผ่าน" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mGF-CJ-UrZ">
                                 <rect key="frame" x="40" y="196" width="240" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -96,7 +124,7 @@
                                     <constraint firstAttribute="height" constant="60" id="jjR-tT-nX7"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                <state key="normal" title="SIGN IN">
+                                <state key="normal" title="ลงชื่อเข้าใช้">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -439,10 +467,10 @@
             </objects>
             <point key="canvasLocation" x="-877.5" y="2327.1126760563379"/>
         </scene>
-        <!--รายละเอียด-->
+        <!--กำลังช่วยเหลือ-->
         <scene sceneID="rqx-sB-MSo">
             <objects>
-                <viewController storyboardIdentifier="RescueDetailViewController" title="รายละเอียด" id="kkK-ma-T6p" customClass="RescueDetailViewController" customModule="RescuerApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RescueDetailViewController" title="กำลังช่วยเหลือ" id="kkK-ma-T6p" customClass="RescueDetailViewController" customModule="RescuerApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="btL-mI-px9">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -621,6 +649,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Mask1024_1x" width="1024" height="1024"/>
         <image name="addressPin" width="64" height="64"/>
         <image name="connection" width="200" height="200"/>
         <image name="historyUser" width="30" height="30"/>
