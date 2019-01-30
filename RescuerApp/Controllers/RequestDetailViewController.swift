@@ -264,9 +264,7 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
     
     private func showMsg(msgTitle: String, msgText: String) {
         let alert = UIAlertController(title: msgTitle, message: msgText, preferredStyle: UIAlertController.Style.alert)
-        
         alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default, handler: nil))
-        
         self.present(alert, animated: true, completion: nil)
     }
     
