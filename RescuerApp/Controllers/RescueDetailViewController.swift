@@ -239,7 +239,7 @@ class RescueDetailViewController: UIViewController, CLLocationManagerDelegate, M
             guard let directionResonse = response else {
                 if let error = error {
                     print(error.localizedDescription)
-                    self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
+                    self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "ไม่สามารถแสดงเส้นทางได้")
                 }
                 return
             }

@@ -55,7 +55,7 @@ class HistoryViewController: UIViewController, UITableViewDataSource, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "historyCell",
                                                  for: indexPath) as! HistoryTableViewCell
-        cell.populate(name: "Loading...", address: "Loading...")
+        cell.populate(name: "รอสักครู่..", address: "รอสักครู่..")
         
         let request = historyData[indexPath.row]
         
@@ -122,6 +122,7 @@ class HistoryViewController: UIViewController, UITableViewDataSource, UITableVie
                     self.historyListener = historyRef.addSnapshotListener { (snapshot, error) in
                         if let error = error {
                             print ("I got an error retrieving requests: \(error)")
+                            self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "โปรดลองใหม่อีกครั้ง")
                             return
                         }
                         guard let snapshot = snapshot else { return }
@@ -148,7 +149,7 @@ class HistoryViewController: UIViewController, UITableViewDataSource, UITableVie
     private func showMsg(msgTitle: String, msgText: String) {
         let alert = UIAlertController(title: msgTitle, message: msgText, preferredStyle: UIAlertController.Style.alert)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+        alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default, handler: nil))
         
         self.present(alert, animated: true, completion: nil)
     }

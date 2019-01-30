@@ -35,9 +35,9 @@ class RequestDetailViewController: UIViewController, CLLocationManagerDelegate, 
         setNeedsStatusBarAppearanceUpdate()
         startListening()
         
-        titleLabel.text = "รอสักครู่..."
-        addressLabel.text = "รอสักครู่..."
-        phoneNumber.text = "รอสักครู่..."
+        titleLabel.text = "รอสักครู่.."
+        addressLabel.text = "รอสักครู่.."
+        phoneNumber.text = "รอสักครู่.."
         
         rescueButton.layer.cornerRadius = 10.0
         rescueButton.layer.masksToBounds = true

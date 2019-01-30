@@ -25,9 +25,9 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        nameLabel.text = "Loading..."
-        addressLabel.text = "Loading..."
-        phoneLabel.text = "Loading..."
+        nameLabel.text = "รอสักครู่.."
+        addressLabel.text = "รอสักครู่.."
+        phoneLabel.text = "รอสักครู่.."
         
         phoneLabel.text = request.phoneNumber
         
@@ -54,7 +54,7 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
             locationManager.startUpdatingLocation()
         }
         else {
-            showMsg(msgTitle: "Cannot Access Location Service", msgText: "Do not have Location Services or permission is not given")
+            showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "ไม่สามารถเข้าถึงตำแหน่งได้")
         }
     }
     
@@ -74,7 +74,7 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
     private func showMsg(msgTitle: String, msgText: String) {
         let alert = UIAlertController(title: msgTitle, message: msgText, preferredStyle: UIAlertController.Style.alert)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+        alert.addAction(UIAlertAction(title: "ตกลง", style: UIAlertAction.Style.default, handler: nil))
         
         self.present(alert, animated: true, completion: nil)
     }
@@ -85,7 +85,7 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
             else {
-                showMsg(msgTitle: "Cannot Access Phone Call", msgText: "Do not have phone call or permission is not given")
+                self.showMsg(msgTitle: "ไม่สามารถเข้าถึงการโทรได้", msgText: "โปรดโทรไปที่เบอร์ \(phoneNumber)")
             }
         }
     }
@@ -100,7 +100,7 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
         let des = CLLocationCoordinate2D(latitude: requestLocation.latitude, longitude: requestLocation.longitude)
         
         srcPin.coordinate = src
-        srcPin.title = "ฉัน"
+        srcPin.title = "คุณอยู่ที่นี่"
         desPin.coordinate = des
         desPin.title = "ผู้ประสบภัย"
         
@@ -119,6 +119,7 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
             guard let directionResonse = response else {
                 if let error = error {
                     print("we have error getting directions==\(error.localizedDescription)")
+                    self.showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "ไม่สามารถแสดงเส้นทางได้")
                 }
                 return
             }
@@ -132,7 +133,7 @@ class HistoryDetailViewController: UIViewController, CLLocationManagerDelegate, 
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        showMsg(msgTitle: "Cannot Access Location Service", msgText: "Do not have Location Services or permission is not given")
+        showMsg(msgTitle: "เกิดข้อผิดพลาด", msgText: "ไม่สามารถเข้าถึงตำแหน่งได้")
     }
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
